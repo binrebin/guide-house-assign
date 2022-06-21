@@ -53,9 +53,9 @@ def main():
             
             
 
-            # while not page_is_loading(driver):
+            while not page_is_loading(driver):
  
-            #     continue
+                continue
             
             soup = BeautifulSoup(driver.page_source, "lxml")
             
