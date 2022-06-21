@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
+
 from db_func import *
 
 def add_command():
@@ -30,8 +31,9 @@ def delete_command():
     listing.delete(0, END)
     delete(selected_tuple[0])
 
-def dowload_csv():
-    pass
+def download_db():
+    download_csv()
+    
 
 def upload_csv(event=None):
     filename = filedialog.askopenfilename()
@@ -160,7 +162,7 @@ button3.grid(row = 8, column = 3)
 button4 = Button(window, 
                 text = "Download CSV", 
                 width = 12, 
-                command = delete_command)
+                command = download_db)
 button4.grid(row = 9, column = 3)
 
 button5 = Button(window, 

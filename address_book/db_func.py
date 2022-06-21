@@ -1,5 +1,7 @@
 import sqlite3
 import csv
+import pandas as pd
+import tkinter.messagebox
 
 
 def connect():
@@ -64,7 +66,12 @@ def insert_csv(filename):
 
 
 def download_csv():
-    pass
+    conn_obj = sqlite3.connect("addressbook.db")
+    db_df = pd.read_sql_query("SELECT * FROM book", conn_obj)
+    filename = 'database.csv'
+    db_df.to_csv(filename, index=False)
+    tkinter.messagebox.showinfo("Download Complete",  "download.csv saved !")
+    
 
 
 connect()
