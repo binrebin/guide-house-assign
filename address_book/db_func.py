@@ -12,6 +12,7 @@ def connect():
                     "fname text, "
                     "mname text, "
                     "lname text, "
+                    "age integer, "
                     "addr_1 text, "
                     "city text,"
                     "state text,"
@@ -20,11 +21,11 @@ def connect():
     conn_obj.close()
 
 
-def insert(fname, mname, lname, addr_1, city, state, ph_num):
+def insert(fname, mname, lname, age, addr_1, city, state, ph_num):
     conn_obj = sqlite3.connect("addressbook.db")
     cur_obj = conn_obj.cursor()
     cur_obj.execute("INSERT INTO book "
-                    "VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)", (fname, mname, lname, addr_1, city, state, ph_num))
+                    "VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)", (fname, mname, lname, age, addr_1, city, state, ph_num))
     conn_obj.commit()
     conn_obj.close()
 
@@ -65,13 +66,25 @@ def insert_csv(filename):
     conn_obj.close()
 
 
-def download_csv():
+def download_csv(age_min, age_max):
+    age_max = int(age_max) if age_max != '' else 0
+    age_min = int(age_min) if age_min != '' else 0
+    print(f'agemin-{age_min}-{type(age_min)} : agemax-{age_max}-{type(age_max)}')
     conn_obj = sqlite3.connect("addressbook.db")
-    db_df = pd.read_sql_query("SELECT * FROM book", conn_obj)
-    filename = 'database.csv'
+    if age_min == 0 and age_max == 0:
+        db_df = pd.read_sql_query("SELECT * FROM book", conn_obj)
+    if age_min != 0 and age_max == 0:
+        query = f"""SELECT * FROM book WHERE age > {age_min}"""
+        db_df = pd.read_sql_query(query, conn_obj)
+    if age_min == 0 and age_max != 0:
+        query = f"""SELECT * FROM book WHERE age < {age_max}"""
+        db_df = pd.read_sql_query(query, conn_obj)
+    if age_min != 0 and age_max != 0:
+        query = f"""SELECT * FROM book WHERE age BETWEEN {age_min} AND {age_max} """
+        db_df = pd.read_sql_query(query, conn_obj)
+    filename = f'age_group-{str(age_min)}-{str(age_max)}-db.csv'
     db_df.to_csv(filename, index=False)
-    tkinter.messagebox.showinfo("Download Complete",  "download.csv saved !")
-    
+    tkinter.messagebox.showinfo("Complete",  f"{filename} saved !")
 
 
 connect()
